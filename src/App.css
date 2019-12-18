@@ -1,0 +1,100 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: #1F1F1F;
+  font-family: "Roboto", sans-serif;
+  font-size: 13px;
+  line-height: 21px;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 650px;
+}
+
+.main {
+  max-width: 1980px;
+  width: 100%;
+}
+
+.blue {
+  background-color: cornflowerblue;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+}
+
+.yellow {
+  background-color: yellow;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+}
+
+.green {
+  background-color: green;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+}
+
+.score {
+  display: flex;
+  margin: auto;
+}
+
+.container-score {
+  display: flex;
+  margin: auto;
+}
+
+.red {
+  background-color: red;
+  width: 50px;
+  height: 50px;
+  margin: 5px;
+}
+
+.score {
+  margin: auto;
+  display: flex;
+  justify-content: space-around;
+  width: 200px;
+}
+
+.container-score {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  margin: 20px;
+}
+
+.form-control {
+  width: 50%;
+  margin: 20px auto 0 auto;
+}
+
+.h1 {
+  display: flex;
+  justify-content: center;
+  margin: 10px;
+}
+
+.container-box {
+  display: flex;
+  justify-content: space-around;
+  width: 500px;
+  margin: 20px auto 0 auto;
+}
+
+.text-one,
+.text-two {
+  font-family: " Open Sans", sans-serif;
+  font-weight: bold;
+  font-size: 18px;
+}
