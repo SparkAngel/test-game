@@ -19,6 +19,7 @@ const App = () => {
   const [aiWin, setAiWin] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [input, setInput] = useState();
+  const [oneClick, setOneClick] = useState(false);
   const WIN_POINT = 9;
   const disabledButton = firstGame || !input;
 
@@ -36,7 +37,8 @@ const App = () => {
     setEndTimes(false),
     setFirstGame(false),
     setRandom(null),
-    setNextGame(true)
+    setNextGame(true),
+    setOneClick(false)
   );
 
   const whoWin = () => (
@@ -44,15 +46,21 @@ const App = () => {
   );
 
   const handleClick = (e) => {
-    if (random === +e.target.id && !endTimes) {
+    if (firstGame) {
+    if (random === +e.target.id && !endTimes && !oneClick) {
       setYouWin(youWin + 1);
       setIsActive(false);
       setChooseTrue(true);
+      setOneClick(true);
       whoWin();
     } else {
       setIsActive(false);
-      setAiWin(aiWin + 1);
+      setOneClick(true);
+      setAiWin((oneClick ? aiWin + 0 : aiWin + 1));
     }
+  } else {
+    return;
+  }
   };
 
   const getContainerColor = (e) => {
@@ -81,6 +89,7 @@ const App = () => {
             clearInterval(interval);
             setIsActive(false);
             setSeconds(0);
+            setOneClick(true);
 
             if (!chooseTrue) { setEndTimes(true); }
             setAiWin(prev => prev + 1);
@@ -104,7 +113,8 @@ const App = () => {
     setFirstGame(false),
     setNextGame(true),
     setRandom(),
-    setInput()
+    setInput(),
+    setOneClick(false)
   );
 
   const inputSeconds = e => (
