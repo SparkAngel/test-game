@@ -20,26 +20,25 @@ body {
   max-width: 1980px;
   width: 100%;
 }
-
-.blue {
-  background-color: cornflowerblue;
+.blue,
+.green,
+.red,
+.yellow {
   width: 50px;
   height: 50px;
   margin: 5px;
+}
+
+.blue {
+  background-color: cornflowerblue;
 }
 
 .yellow {
   background-color: yellow;
-  width: 50px;
-  height: 50px;
-  margin: 5px;
 }
 
 .green {
   background-color: green;
-  width: 50px;
-  height: 50px;
-  margin: 5px;
 }
 
 .score {
@@ -54,9 +53,6 @@ body {
 
 .red {
   background-color: red;
-  width: 50px;
-  height: 50px;
-  margin: 5px;
 }
 
 .score {
