@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// import { times, sample, remove } from 'lodash'
 import _times from 'lodash/times';
 import _sample from 'lodash/sample';
 import _remove from 'lodash/sample';
@@ -6,6 +7,9 @@ import classNames from 'classnames';
 import Modal from '../components/modal';
 
 const GameApp = (props) => {
+
+  // рационально раз мы используем redux как общий store, то эти методы можно было описывать там, чтобы очистить View от логики
+
   const [isActive, setIsActive] = useState(false);
   const [seconds, setSeconds] = useState();
   const [random, setRandom] = useState();
@@ -77,7 +81,7 @@ const GameApp = (props) => {
       interval = setInterval(() => {
         setSeconds(sec => {
           if (sec === 0) {
-            setEndTimes(true);
+            // setEndTimes(true);
             setIsActive(false);
             setAiWin(prev => prev + 1);
             whoWin();
@@ -110,6 +114,7 @@ const GameApp = (props) => {
         onChange={inputSeconds}
       />
       <h1 className="h1">{seconds}</h1>
+      {/*  Отдельный компонент */ }
 
       <div className="container-score">
         <h2>Score</h2>
@@ -120,6 +125,7 @@ const GameApp = (props) => {
           <div className="text-two">{aiWin}</div>
         </div>
       </div>
+      {/*  Отдельный компонент */ }
 
       <div className="container">
         {arr.map((el, i) => (
@@ -137,6 +143,7 @@ const GameApp = (props) => {
           </div>
         ))}
       </div>
+      {/*  Отдельный компонент */ }
 
       <div className="container-box">
         <button
@@ -146,10 +153,12 @@ const GameApp = (props) => {
           onClick={handleStartGame}
         >
               START
-        </button>
+        </button> 
+        {/*  Отдельный компонент */ }
       </div>
 
       <Modal aiWin={aiWin} youWin={youWin}/>
+      {/* <Modal {...{ aiWin, youWin }} /> */}
     </div>
   );
 };

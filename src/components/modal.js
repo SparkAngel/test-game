@@ -7,12 +7,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 const ModalComponent = (props) => {
-  const show = props.register.show;
-  const aiWin = props.aiWin;
-  const youWin = props.youWin;
+  const { aiWin, youWin, register, showModal } = props
+  const { show } = register
+  // const show = props.register.show;
+  // const aiWin = props.aiWin;
+  // const youWin = props.youWin;
 
   const handleClose = () => (       //функция для диспатча в редакс и закрытия модпльного окна
-    props.showModal(false),
+    showModal(false),
+    // props.showModal(false),
     window.location.reload()
   );
 
