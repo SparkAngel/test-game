@@ -1,11 +1,11 @@
 import React from 'react';
-import GameContainer from './container/gameContainer';
+import GameApp from './components/gameApp';
 import './App.css';
 
 const App = () => (
   <div className="App">
-    <GameContainer />
+    <GameApp />
   </div>
-)
+);
 
 export default App;

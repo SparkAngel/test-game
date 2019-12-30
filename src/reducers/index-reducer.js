@@ -5,7 +5,4 @@ const reducers = combineReducers({
   register: gameReducer,
 });
 
-const store = createStore(reducers);
-
-window.store = store;
-export default store;
+export default createStore(reducers);

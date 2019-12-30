@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { showModalCreator} from '../reducers/gameReducer';
 import Modal from 'react-bootstrap/Modal';
@@ -6,13 +6,9 @@ import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
-const ModalComponent = (props) => {
-  const show = props.register.show;
-  const aiWin = props.aiWin;
-  const youWin = props.youWin;
-
+const ModalComponent = ({showModal, register:{show, aiWin, youWin}}) => {
   const handleClose = () => (       //функция для диспатча в редакс и закрытия модпльного окна
-    props.showModal(false),
+    showModal(false),
     window.location.reload()
   );
 
@@ -52,4 +48,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ModalComponent);;
+export default connect(mapStateToProps, mapDispatchToProps)(ModalComponent);

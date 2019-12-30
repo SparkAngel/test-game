@@ -1,104 +1,117 @@
 import React, { useState, useEffect } from 'react';
 import _times from 'lodash/times';
-import _sample from 'lodash/sample';
-import _remove from 'lodash/sample';
-import classNames from 'classnames';
+import { connect } from 'react-redux';
+import { showModalCreator,
+  inputNameCreator, randomCreator, setRedCreator,
+  setGreenCreator, setIsActiveCreator,
+  setEndTimesCreator, setAiWinCreator, setYouWinCreator
+} from '../reducers/gameReducer';
 import Modal from '../components/modal';
+import Score from '../components/score';
+import DivContainer from '../components/divContainer';
+import Button from '../components/button';
 
-const GameApp = (props) => {
-  const [isActive, setIsActive] = useState(false);
+let interval = null;
+const WIN_POINT = 9;
+
+const GameApp = ({
+  inputSecDispatch,
+  showModalDispatch,
+  isActiveDispatch,
+  endTimesDispatch,
+  randomDispatch,
+  setGreenColorDispatch,
+  setRedColorDispatch,
+  setAiWinDispatch,
+  setYouWinDispatch,
+  register: {
+    inputSeconds,
+    randomNumber,
+    redColor,
+    greenColor,
+    isActive,
+    endTimes,
+    aiWin,
+    youWin
+  }}) => {
+
   const [seconds, setSeconds] = useState();
-  const [random, setRandom] = useState();
   const [arr] = useState(_times(100, Number)); // массив от 0-100
-  const [green, setGreen] = useState([]);
-  const [red, setRed] = useState([]);
-  const [endTimes, setEndTimes] = useState(false);
-  const [youWin, setYouWin] = useState(0);
-  const [aiWin, setAiWin] = useState(0);
-  const [oneClick, setOneClick] = useState(false);
-  const WIN_POINT = 9;
-  const secondsRedux = props.register.inputValue;
-  const disabledButton = secondsRedux > 0 ? false : true;
-  const [arrRandom, serArrRandom] = useState(_times(100, Number));  // массив от 0-100
-
-  const randomNumber = () => {  // для вычисления рандомного числа по которому ДИВ нужно нажать
-    let number = _sample(arrRandom); // рандомный элемент из масива что бы не повторялись числа.
-    serArrRandom(arrRandom.filter(n => n != number))
-    setRandom(number);
-  };
+  const disabledButton = inputSeconds > 0 ? false : true;
 
   const handleStartGame = () => (
-    setSeconds(secondsRedux),
-    randomNumber(),
-    setIsActive(true)
+    setSeconds(inputSeconds),
+    randomDispatch(),
+    isActiveDispatch(true)
   );
 
-  const handleNextGame = () => (
-    setSeconds(secondsRedux),
-    setEndTimes(false),
-    randomNumber(),
-    setOneClick(false),
-    setIsActive(true)
+  const nextGameIteration = () => (
+    setSeconds(inputSeconds),
+    endTimesDispatch(false),
+    randomDispatch()
   );
 
   const whoWin = () => {  // для определения кто выиграл и нужно ли закончить игру
     if (aiWin === WIN_POINT || youWin === WIN_POINT) {
-      setSeconds(0);
+      isActiveDispatch(false);
       showModalDispatch(true);
+    }
+      return
+  };
+
+  const handleClick = e => {  // определение правильности выбора и  случайных нажатий
+    if (isActive || endTimes) {
+      if (randomNumber === +e.target.id && !endTimes) {
+        setGreenColorDispatch(+e.target.id);
+        setYouWinDispatch(1);
+        whoWin();
+        nextGameIteration();
+      } else {
+        setRedColorDispatch(randomNumber);
+        setAiWinDispatch(1);
+        whoWin();
+        nextGameIteration();
+      }
     } else {
       return
     }
   };
 
-  const handleClick = (e) => {  // определение правильности выбора и  случайных нажатий
-    if (isActive || endTimes) {
-    if (random === +e.target.id && !endTimes && !oneClick) {
-      setGreen([...green, +e.target.id]);
-      setOneClick(true);
-      setYouWin(youWin + 1);
-      whoWin();
-      handleNextGame();
-    } else {
-      setRed([...red, random]);
-      setOneClick(true);
-      setAiWin((oneClick ? aiWin + 0 : aiWin + 1));
-      whoWin();
-      handleNextGame();
-    }
-  } else {
-    return;
-  }
-  };
-
-  useEffect(() => {  // в хуке делаю интервал для отсчета времени
-    let interval = null;
-
-    if (isActive) {
-      interval = setInterval(() => {
-        setSeconds(sec => {
-          if (sec === 0) {
-            setEndTimes(true);
-            setIsActive(false);
-            setAiWin(prev => prev + 1);
+  const gameCycle = () => (
+    interval = setInterval(() => {
+      setSeconds(sec => {
+        if (sec === 0) {
+          if (aiWin === WIN_POINT) {
+            clearInterval(interval);
             whoWin();
           } else {
-            return sec - 1;
+            setRedColorDispatch(randomNumber);
+            setAiWinDispatch(1);
+            endTimesDispatch(true);
+            whoWin();
+            nextGameIteration()
           }
-        });
-      }, 50);
+            return sec;
+        } else {
+          return sec - 1;
+        }
+      });
+    }, 50)
+  );
+
+  useEffect(() => {  // в хуке делаю интервал для отсчета времени
+
+    if (isActive) {
+      gameCycle()
     } else {
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
-  }, [isActive]);
+  }, [isActive, gameCycle]);
 
-  const inputSeconds = e => (   // для диспатча значения из инпута в стайте редакса
-    props.inputSec(e.target.value)
-  );
-
-  const showModalDispatch = e => ( // для диспатча значения из инпута в стайте редакса
-    props.showModal(e)
+  const handleOnChange = e => (   // для диспатча значения из инпута в стайте редакса
+    inputSecDispatch(e.target.value)
   );
 
   return (
@@ -107,51 +120,65 @@ const GameApp = (props) => {
         type="number"
         className="form-control"
         placeholder="Choose your speed (ms)"
-        onChange={inputSeconds}
+        onChange={handleOnChange}
       />
       <h1 className="h1">{seconds}</h1>
 
       <div className="container-score">
-        <h2>Score</h2>
-        <div className="score">
-          <div className="text-one">You:</div>
-          <div className="text-two">{youWin}</div>
-          <div className="text-one">AI:</div>
-          <div className="text-two">{aiWin}</div>
-        </div>
+        <Score {...{ aiWin, youWin }} />
       </div>
 
       <div className="container">
-        {arr.map((el, i) => (
-          <div
-            key={el}
-            className={classNames({
-              'blue': true,
-              'yellow': random === i && !oneClick,
-              'green': green.includes(i),
-              'red': red.includes(i),
-                })}
-            id={i}
-            onClick={handleClick}
-          >
-          </div>
-        ))}
+        <DivContainer {...{ arr, randomNumber,
+          greenColor, redColor, handleClick }}
+        />
       </div>
 
       <div className="container-box">
-        <button
-          type="submit"
-          className="btn btn-primary btn-sm"
-          disabled={disabledButton}
-          onClick={handleStartGame}
-        >
-              START
-        </button>
+        <Button {...{ disabledButton, handleStartGame }}/>
       </div>
 
-      <Modal aiWin={aiWin} youWin={youWin}/>
+      <Modal />
     </div>
   );
 };
 
-export default GameApp;
+const mapStateToProps = (state) => {
+  return {
+    register: state.register,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    inputSecDispatch: (text) => {
+      dispatch(inputNameCreator(text));
+    },
+    showModalDispatch: (value) => {
+      dispatch(showModalCreator(value));
+    },
+    isActiveDispatch: (value) => {
+      dispatch(setIsActiveCreator(value));
+    },
+    endTimesDispatch: (value) => {
+      dispatch(setEndTimesCreator(value));
+    },
+    randomDispatch: () => {
+      dispatch(randomCreator());
+    },
+    setGreenColorDispatch: (value) => {
+      dispatch(setGreenCreator(value));
+    },
+    setRedColorDispatch: (value) => {
+      dispatch(setRedCreator(value));
+    },
+    setAiWinDispatch: (value) => {
+      dispatch(setAiWinCreator(value));
+    },
+    setYouWinDispatch: (value) => {
+      dispatch(setYouWinCreator(value));
+    },
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameApp);
